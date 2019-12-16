@@ -41,7 +41,7 @@ public class DependencyEnforcerPluginTest {
         GradleRunner runner = buildRunner(enforceDescriptor)
         BuildResult result = runner.build()
         Assert.assertEquals(TaskOutcome.SUCCESS,
-                result.task(":${DependencyEnforcerPlugin.ENFORCE_DEPENDENCY_TASK_NAME}").getOutcome());
+                result.task(":enforceDependency").getOutcome());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class DependencyEnforcerPluginTest {
         GradleRunner runner = buildRunner(enforceDescriptor)
         BuildResult result = runner.buildAndFail()
         Assert.assertEquals(TaskOutcome.FAILED,
-                result.task(":${DependencyEnforcerPlugin.ENFORCE_DEPENDENCY_TASK_NAME}").getOutcome());
+                result.task(":enforceDependency").outcome);
     }
 
     private GradleRunner buildRunner(String enforceDescriptor) {
@@ -88,7 +88,7 @@ public class DependencyEnforcerPluginTest {
         """
         buildFile.text = buildFileContent
 
-        String agenPath = System.getenv().get("jacocoAgenPath")
+        String agenPath = System.getenv().get("jacocoAgentPath")
         String destinationFile = System.getenv().get("jacocoDestinationFile")
         String jvmArg = "-javaagent:$agenPath=" +
                 "includes=io/github/ezequielb/gradle/dependencyenforcer/**," +
@@ -100,6 +100,7 @@ public class DependencyEnforcerPluginTest {
                 .withPluginClasspath())
                 .withJvmArguments(jvmArg)
                 .withArguments("check")
+                .withDebug(true)
     }
 
 }

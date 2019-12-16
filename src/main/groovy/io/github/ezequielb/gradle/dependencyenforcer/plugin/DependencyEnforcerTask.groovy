@@ -8,9 +8,9 @@ import io.github.ezequielb.gradle.dependencyenforcer.rule.DependencyRule
 import io.github.ezequielb.gradle.dependencyenforcer.rule.DependencyRuleBuilder
 import io.github.ezequielb.gradle.dependencyenforcer.util.ArtifactResolver
 import io.github.ezequielb.gradle.dependencyenforcer.util.MavenSharedDependencyAnalysis
-
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -21,7 +21,7 @@ class DependencyEnforcerTask extends DefaultTask {
     List<Map<String, Object>> rulesDescriptor
 
     @Input
-    File classesDir
+    FileCollection classesDirs
 
     @OutputFile
     File resultOut
@@ -41,14 +41,16 @@ class DependencyEnforcerTask extends DefaultTask {
 
     @TaskAction
     void runEnforceTask() {
-        DependencyRuleEnforcer enforcer =
-                new DependencyRuleEnforcer(new MavenSharedDependencyAnalysis(classesDir), buildDependencyRules())
-        enforcerResult = enforcer.enforceRules()
-        resultOut.withWriter { writer ->
-            writer.write(JsonOutput.prettyPrint(JsonOutput.toJson(enforcerResult)))
-        }
-        if (failOnDisallowedUsage && !enforcerResult.successful) {
-            throw new PackageDependencyEnforcerException("Unallowed dependencies usage found");
+        classesDirs.each {
+            DependencyRuleEnforcer enforcer =
+                    new DependencyRuleEnforcer(new MavenSharedDependencyAnalysis(it), buildDependencyRules())
+            enforcerResult = enforcer.enforceRules()
+            resultOut.withWriter { writer ->
+                writer.write(JsonOutput.prettyPrint(JsonOutput.toJson(enforcerResult)))
+            }
+            if (failOnDisallowedUsage && !enforcerResult.successful) {
+                throw new PackageDependencyEnforcerException("Disallowed dependencies usage found");
+            }
         }
     }
 

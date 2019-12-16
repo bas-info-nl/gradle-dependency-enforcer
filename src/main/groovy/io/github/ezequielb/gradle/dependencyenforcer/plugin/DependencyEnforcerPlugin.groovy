@@ -23,7 +23,7 @@ public class DependencyEnforcerPlugin implements Plugin<Project> {
                 def descriptor = extension.toRulesDescriptor()
                 descriptor.add([pkg: '*', allowed: [DependencyRuleApplierBuilder.SAME_PACKAGE_RULE_NAME, 'java'], disallowed: []])
                 rulesDescriptor = descriptor
-                classesDir = project.sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).output.classesDir
+                classesDirs = project.sourceSets.getByName(SourceSet.MAIN_SOURCE_SET_NAME).output.classesDirs
                 resultOut = new File("${project.buildDir}/enforcer.dat")
                 failOnDisallowedUsage = extension.failOnDisallowedUsage
                 resolver = new GradleArtifactResolver(project.configurations.compile
