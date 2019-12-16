@@ -1,13 +1,20 @@
 name: CI
 
-on: [push]
+on:
+  push:
+    branches:
+    - master
 
 jobs:
   build:
 
-    runs-on: gradle_jdk11
+    runs-on: linux
 
     steps:
     - uses: actions/checkout@v1
-    - name: Build
-      run: gradle build
+    - uses: actions/setup-java@v1
+      with:
+        java-version: 11
+    - uses: eskatos/gradle-command-action@v1
+      with:
+        arguments: build
