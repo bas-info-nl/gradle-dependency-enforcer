@@ -1,0 +1,13 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: gradle_jdk11
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      run: gradle build
